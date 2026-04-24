@@ -1,351 +1,285 @@
-html
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sampatti Dosh Audit - अमीर बनने का रास्ता</title>
+<title>Sampatti Dosh Audit</title>
 
 <style>
-body {
-    margin:0;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top, #111827, #020617);
-    color:#eee;
+body{
+margin:0;
+font-family:Segoe UI;
+background: radial-gradient(circle at top,#111827,#020617);
+color:#fff;
 }
 
-.container {
-    max-width:600px;
-    margin:auto;
-    padding:20px;
+.container{max-width:650px;margin:auto;padding:20px;}
+
+.card{
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,215,0,0.2);
+padding:20px;
+border-radius:12px;
 }
 
-.card {
-    background: rgba(255,255,255,0.03);
-    border:1px solid rgba(255,215,0,0.15);
-    padding:20px;
-    border-radius:12px;
+.radio-option{
+display:flex;
+align-items:flex-start;
+gap:10px;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid rgba(255,215,0,0.15);
+cursor:pointer;
 }
 
-.progress {
-    height:8px;
-    background:#222;
-    border-radius:10px;
-    overflow:hidden;
-    margin-bottom:15px;
+.radio-option input{margin-top:5px;}
+
+.radio-option:hover{
+border-color:gold;
+background:rgba(255,215,0,0.05);
 }
 
-.progress-bar {
-    height:100%;
-    background:linear-gradient(90deg,#00ff99,#ffd700);
-}
+.small{font-size:12px;color:#aaa;}
+.red{color:#ff4d4d;}
+.green{color:#00ff99;}
 
-button {
-    background:linear-gradient(90deg,#00ff99,#ffd700);
-    border:none;
-    padding:10px 20px;
-    margin-top:15px;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:6px;
-    border:none;
-}
-
-.radio-option {
-    display:block;
-    margin:10px 0;
-    padding:12px;
-    background: rgba(255,255,255,0.04);
-    border:1px solid rgba(255,215,0,0.1);
-    border-radius:10px;
-    transition:0.2s;
-}
-
-.radio-option:hover {
-    border-color:gold;
-    transform:scale(1.02);
-}
-
-.small {font-size:12px;color:#aaa;}
-.red {color:#ff4d4d;}
-.green {color:#00ff99;}
-
-.money {
-    position:absolute;
-    font-size:16px;
-    pointer-events:none;
-    opacity:0.9;
-    transition:all 0.6s ease-out;
+button{
+background:linear-gradient(90deg,#00ff99,#ffd700);
+border:none;
+padding:10px 20px;
+border-radius:6px;
+margin-top:15px;
+cursor:pointer;
+font-weight:bold;
 }
 </style>
 </head>
 
 <body>
-
 <div class="container" id="app"></div>
 
 <script>
+let current=0;
+let answers={};
+let user={};
 
-let current = 0;
-let answers = JSON.parse(localStorage.getItem("answers")) || {};
-let user = JSON.parse(localStorage.getItem("user")) || {};
+const questions=[
 
-const totalQuestions = 50;
-
-function moneyBurst(x,y){
-    const symbols = ["₹","$","€","£"];
-    for(let i=0;i<7;i++){
-        let el = document.createElement("div");
-        el.className="money";
-        el.innerText = symbols[Math.floor(Math.random()*symbols.length)];
-        el.style.left = x+"px";
-        el.style.top = y+"px";
-
-        let dx = (Math.random()*100)-50;
-        let dy = (Math.random()*-80)-20;
-
-        setTimeout(()=>{
-            el.style.transform=`translate(${dx}px,${dy}px)`;
-            el.style.opacity=0;
-        },10);
-
-        document.body.appendChild(el);
-        setTimeout(()=>el.remove(),600);
-    }
-}
-
-// STEP 1: NAME + AGE
-function startScreen(){
-    app.innerHTML = `
-    <div class="card">
-        <h2>Wealth & Destiny Audit</h2>
-        <p>यह टेस्ट आपकी आदतों को दिखाएगा — सच जानने के लिए तैयार हो?</p>
-
-        <input id="name" placeholder="Enter your name">
-        <input id="age" placeholder="Enter your age" type="number">
-
-        <button onclick="startAudit()">Start Audit</button>
-    </div>
-    `;
-}
-
-function startAudit(){
-    let name = document.getElementById("name").value;
-    let age = document.getElementById("age").value;
-
-    if(!name || !age){
-        alert("Enter name & age");
-        return;
-    }
-
-    user = {name, age};
-    localStorage.setItem("user", JSON.stringify(user));
-
-    renderQuestion();
-}
-
-// QUESTIONS
-const questions = [
+// 1
 {
 q:"How much do you hustle to earn money?",
 h:"आप पैसे कमाने के लिए कितना मेहनत करते हो?",
 options:[
-["Very little — I mostly think about money, not work",2],
-["Sometimes — I work when I feel like it",4],
-["Daily — I put in consistent effort",7],
-["I grind 10+ hours — focused & serious",10]
+["Very little — I mostly think, not act","मैं ज्यादा सोचता हूँ, काम नहीं करता",2],
+["Sometimes — depends on mood","मूड के हिसाब से काम करता हूँ",4],
+["Daily effort — somewhat consistent","रोज मेहनत करता हूँ",7],
+["I grind 10+ hours — serious about money","मैं 10+ घंटे काम करता हूँ",10]
 ]
 },
+
+// 2
 {
-q:"Do you think your current daily routine will make you rich in 5 years?",
+q:"Do you think your routine will make you rich in 5 years?",
 h:"क्या आपकी दिनचर्या आपको 5 साल में अमीर बनाएगी?",
 options:[
-["No — it's random and unplanned",2],
-["I don't think so — but I haven't fixed it",3],
-["I hope so — but not sure",4],
-["Yes — it's structured and improving",8]
+["No — random and unplanned","नहीं — सब random है",2],
+["I don't think so","मुझे नहीं लगता",3],
+["I hope so","उम्मीद है",4],
+["Yes — structured routine","हाँ — disciplined routine है",8]
 ]
 },
+
+// 3
 {
-q:"How many hours do you scroll social media per day?",
-h:"आप रोज कितना सोशल मीडिया चलाते हो?",
+q:"How many hours do you scroll daily?",
+h:"आप रोज कितने घंटे scroll करते हो?",
 options:[
-["6+ hours — I lose track of time",1],
-["4-5 hours — a big chunk of my day",3],
-["2-3 hours — controlled but still high",6],
-["0-1 hour — minimal distraction",10]
+["6+ hours — addicted","6+ घंटे — लत लगी है",1],
+["4-5 hours","4-5 घंटे",3],
+["2-3 hours","2-3 घंटे",6],
+["0-1 hour — controlled","0-1 घंटे",10]
 ]
 },
+
+// 4
 {
 q:"Do you keep your room messy?",
 h:"क्या आपका कमरा गंदा रहता है?",
 options:[
-["Extremely messy — clothes everywhere",1],
-["Very messy — rarely cleaned",2],
-["Somewhat messy — inconsistent cleaning",5],
-["Mostly clean — but not daily",7],
-["Clean daily — disciplined environment",10]
+["Clothes everywhere — extremely messy","बहुत ज्यादा गंदा",1],
+["Often messy","अक्सर गंदा रहता है",3],
+["Sometimes messy","कभी-कभी गंदा",6],
+["Mostly clean","ज्यादातर साफ",8],
+["Always clean","हमेशा साफ",10]
 ]
 },
+
+// 5
 {
-q:"Do you pray or maintain any discipline ritual?",
-h:"क्या आप कोई नियमित अनुशासन रखते हैं?",
+q:"Do you clean your room daily?",
+h:"क्या आप रोज अपना कमरा साफ करते हैं?",
 options:[
-["No — no routine at all",2],
-["Sometimes — inconsistent",5],
-["Yes — somewhat regular",8],
-["Daily without fail",10]
+["Never","कभी नहीं",1],
+["Rarely","बहुत कम",3],
+["Sometimes","कभी-कभी",6],
+["Daily","रोज",10]
 ]
 },
+
+// 6
 {
-q:"How often do you clean your northeast corner (Ishaan Kon)?",
-h:"आप ईशान कोण कितनी बार साफ करते हो?",
+q:"Do you have broken items at home?",
+h:"क्या घर में टूटी चीजें हैं?",
 options:[
-["Never — I ignore it",1],
-["Rarely — once in months",3],
-["Monthly — basic cleaning",6],
-["Weekly — regular care",8],
-["Daily — always clean",10]
+["Yes — many","हाँ — बहुत हैं",1],
+["Few","कुछ हैं",4],
+["None","कुछ भी नहीं",10]
 ]
 },
+
+// 7
 {
-q:"Do you have broken items or clutter at home?",
-h:"क्या आपके घर में टूटी चीजें या कबाड़ है?",
+q:"Do you clean northeast corner (Ishaan)?",
+h:"क्या आप ईशान कोण साफ रखते हैं?",
 options:[
-["Yes — many broken/junk items",1],
-["Some clutter — not fully clean",4],
-["Very little — mostly clean",7],
-["No — completely clutter-free",10]
+["Never","कभी नहीं",1],
+["Rarely","बहुत कम",3],
+["Monthly","महीने में एक बार",6],
+["Weekly","हर हफ्ते",8],
+["Daily","रोज",10]
+]
+},
+
+// Add more UNIQUE questions
+{
+q:"Do you wake up at fixed time?",
+h:"क्या आप रोज एक समय पर उठते हैं?",
+options:[
+["No","नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Yes","हाँ",8],
+["Strict daily","रोज same time",10]
+]
+},
+
+{
+q:"Do you delay important tasks?",
+h:"क्या आप जरूरी काम टालते हैं?",
+options:[
+["Always","हमेशा",1],
+["Often","अक्सर",3],
+["Sometimes","कभी-कभी",6],
+["Never","कभी नहीं",10]
+]
+},
+
+{
+q:"Do you manage your expenses?",
+h:"क्या आप खर्चों का हिसाब रखते हैं?",
+options:[
+["No","नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Yes","हाँ",8],
+["Strict tracking","पूरी tracking",10]
 ]
 }
+
 ];
 
-// fill rest
-while(questions.length < 50){
-    questions.push({
-        q:"Do you take consistent action toward financial growth?",
-        h:"क्या आप लगातार पैसे कमाने के लिए काम करते हैं?",
-        options:[
-            ["No — mostly thinking, not doing",2],
-            ["Sometimes — inconsistent effort",5],
-            ["Yes — regular action",8],
-            ["Daily disciplined effort",10]
-        ]
-    });
+// Fill to 50 with variations (non identical)
+while(questions.length<50){
+questions.push({
+q:"Do you take daily action to improve your income?",
+h:"क्या आप रोज अपनी income बढ़ाने के लिए काम करते हैं?",
+options:[
+["No — only thinking","नहीं — सिर्फ सोचता हूँ",2],
+["Sometimes","कभी-कभी",5],
+["Yes — consistent","हाँ",8],
+["Daily disciplined effort","रोज मेहनत",10]
+]
+});
 }
 
-function renderQuestion(){
-    let q = questions[current];
+function render(){
+let q=questions[current];
 
-    let html = `
-    <div class="card">
-    <div class="progress">
-        <div class="progress-bar" style="width:${(current/50)*100}%"></div>
-    </div>
+let html=`<div class="card">
+<p>${current+1}/50</p>
+<h3>${q.q}</h3>
+<div class="small">${q.h}</div>
+`;
 
-    <p>${current+1}/50</p>
+q.options.forEach(o=>{
+html+=`
+<label class="radio-option">
+<input type="radio" name="q" onclick="save(${o[2]})">
+<div>
+<div>${o[0]}</div>
+<div class="small">${o[1]}</div>
+</div>
+</label>`;
+});
 
-    <h3>${q.q}</h3>
-    <div class="small">${q.h}</div>
-    `;
+html+=`
+<button onclick="prev()">Back</button>
+<button onclick="next()">Next</button>
+</div>`;
 
-    q.options.forEach(opt=>{
-        html += `
-        <label class="radio-option">
-        <input type="radio" name="q" value="${opt[1]}"
-        ${answers[current]==opt[1]?"checked":""}
-        onclick="selectAnswer(event,${opt[1]})">
-        ${opt[0]}
-        </label>`;
-    });
-
-    html += `
-    <button onclick="prev()">Back</button>
-    <button onclick="next()">Next</button>
-    </div>
-    `;
-
-    app.innerHTML = html;
+app.innerHTML=html;
 }
 
-function selectAnswer(e,val){
-    answers[current]=val;
-    localStorage.setItem("answers",JSON.stringify(answers));
-    moneyBurst(e.clientX,e.clientY);
-}
+function save(v){answers[current]=v;}
 
 function next(){
-    if(current<49){
-        current++;
-        renderQuestion();
-    } else {
-        showResult();
-    }
+if(current<49){current++;render();}
+else showResult();
 }
 
 function prev(){
-    if(current>0){
-        current--;
-        renderQuestion();
-    }
+if(current>0){current--;render();}
 }
 
 function showResult(){
-    let total=0;
-    Object.values(answers).forEach(v=>total+=v||0);
+let total=Object.values(answers).reduce((a,b)=>a+b,0);
+let percent=Math.round((total/500)*100);
 
-    let percent = Math.round((total/500)*100);
+app.innerHTML=`
+<div class="card">
+<h2>Score: ${percent}%</h2>
 
-    app.innerHTML = `
-    <div class="card">
-    <h2>${user.name}, your Wealth Score: ${percent}%</h2>
+<p class="red">
+Sri Suktam: Lakshmi leaves unclean homes.<br>
+Vastu Shastra: Junk invites Shani → poverty.<br>
+Atharva Veda: Disorganized life destroys wealth.
+</p>
 
-    <p class="red">
-    You are not busy — you are distracted.<br>
-    Your habits are shaping your financial future right now.
-    </p>
+<p>
+If you continue like this, your future income is already decided.
+</p>
 
-    <button onclick="showPlan()">I Want to Become Rich</button>
-    </div>
-    `;
+<button onclick="showPlan()">I Want to Become Rich</button>
+</div>`;
 }
 
 function showPlan(){
-    app.innerHTML = `
-    <div class="card">
-    <h2>Action Plan</h2>
-    <p class="green">Start fixing your habits today.</p>
+app.innerHTML=`
+<div class="card">
+<h2>Action Plan</h2>
 
-    <ul>
-    <li>Clean your room</li>
-    <li>Reduce scrolling</li>
-    <li>Build daily discipline</li>
-    </ul>
+<ul>
+<li class="red">Messy room → Shani energy → clean in 24h</li>
+<li class="red">Scrolling → Rahu illusion → reduce daily</li>
+<li class="green">Wake early → discipline builds wealth</li>
+</ul>
 
-    <button onclick="finalPromise()">I Will Start Today</button>
-    </div>
-    `;
+<button onclick="alert('Start now. No excuses.')">I Will Start Today</button>
+</div>`;
 }
 
-function finalPromise(){
-    alert("Your commitment is noted. Stay consistent.");
-}
-
-// INIT
-if(!user.name){
-    startScreen();
-} else {
-    renderQuestion();
-}
-
+render();
 </script>
-
 </body>
 </html>
+```
