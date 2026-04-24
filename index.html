@@ -1,169 +1,58 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sampatti Dosh Audit</title>
+```js
+const questions = [
 
-<style>
-body{
-margin:0;
-font-family:Segoe UI;
-background: radial-gradient(circle at top,#111827,#020617);
-color:#fff;
-}
-
-.container{max-width:650px;margin:auto;padding:20px;}
-
-.card{
-background:rgba(255,255,255,0.04);
-border:1px solid rgba(255,215,0,0.2);
-padding:20px;
-border-radius:12px;
-}
-
-.radio-option{
-display:flex;
-align-items:flex-start;
-gap:10px;
-padding:12px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid rgba(255,215,0,0.15);
-cursor:pointer;
-}
-
-.radio-option input{margin-top:5px;}
-
-.radio-option:hover{
-border-color:gold;
-background:rgba(255,215,0,0.05);
-}
-
-.small{font-size:12px;color:#aaa;}
-.red{color:#ff4d4d;}
-.green{color:#00ff99;}
-
-button{
-background:linear-gradient(90deg,#00ff99,#ffd700);
-border:none;
-padding:10px 20px;
-border-radius:6px;
-margin-top:15px;
-cursor:pointer;
-font-weight:bold;
-}
-</style>
-</head>
-
-<body>
-<div class="container" id="app"></div>
-
-<script>
-let current=0;
-let answers={};
-let user={};
-
-const questions=[
-
-// 1
+/* 1–10 FOUNDATION */
 {
 q:"How much do you hustle to earn money?",
 h:"आप पैसे कमाने के लिए कितना मेहनत करते हो?",
 options:[
-["Very little — I mostly think, not act","मैं ज्यादा सोचता हूँ, काम नहीं करता",2],
-["Sometimes — depends on mood","मूड के हिसाब से काम करता हूँ",4],
-["Daily effort — somewhat consistent","रोज मेहनत करता हूँ",7],
-["I grind 10+ hours — serious about money","मैं 10+ घंटे काम करता हूँ",10]
+["Very little — mostly thinking, not doing","मैं सोचता ज्यादा हूँ, करता कम हूँ",2],
+["Sometimes — inconsistent effort","कभी-कभी मेहनत करता हूँ",4],
+["Daily — somewhat consistent","रोज मेहनत करता हूँ",7],
+["I grind 10+ hours — serious","मैं लगातार मेहनत करता हूँ",10]
 ]
 },
-
-// 2
 {
-q:"Do you think your routine will make you rich in 5 years?",
+q:"Do you think your current routine will make you rich in 5 years?",
 h:"क्या आपकी दिनचर्या आपको 5 साल में अमीर बनाएगी?",
 options:[
-["No — random and unplanned","नहीं — सब random है",2],
-["I don't think so","मुझे नहीं लगता",3],
+["No — completely unplanned","नहीं — कोई plan नहीं",2],
+["I don’t think so","मुझे नहीं लगता",3],
 ["I hope so","उम्मीद है",4],
-["Yes — structured routine","हाँ — disciplined routine है",8]
+["Yes — structured routine","हाँ — proper routine है",8]
 ]
 },
-
-// 3
 {
 q:"How many hours do you scroll daily?",
-h:"आप रोज कितने घंटे scroll करते हो?",
+h:"आप रोज कितना scroll करते हो?",
 options:[
-["6+ hours — addicted","6+ घंटे — लत लगी है",1],
+["6+ hours — addicted","6+ घंटे",1],
 ["4-5 hours","4-5 घंटे",3],
 ["2-3 hours","2-3 घंटे",6],
 ["0-1 hour — controlled","0-1 घंटे",10]
 ]
 },
-
-// 4
 {
 q:"Do you keep your room messy?",
 h:"क्या आपका कमरा गंदा रहता है?",
 options:[
-["Clothes everywhere — extremely messy","बहुत ज्यादा गंदा",1],
-["Often messy","अक्सर गंदा रहता है",3],
-["Sometimes messy","कभी-कभी गंदा",6],
+["Extremely messy","बहुत ज्यादा गंदा",1],
+["Often messy","अक्सर गंदा",3],
+["Sometimes messy","कभी-कभी",6],
 ["Mostly clean","ज्यादातर साफ",8],
 ["Always clean","हमेशा साफ",10]
 ]
 },
-
-// 5
 {
-q:"Do you clean your room daily?",
-h:"क्या आप रोज अपना कमरा साफ करते हैं?",
-options:[
-["Never","कभी नहीं",1],
-["Rarely","बहुत कम",3],
-["Sometimes","कभी-कभी",6],
-["Daily","रोज",10]
-]
-},
-
-// 6
-{
-q:"Do you have broken items at home?",
-h:"क्या घर में टूटी चीजें हैं?",
-options:[
-["Yes — many","हाँ — बहुत हैं",1],
-["Few","कुछ हैं",4],
-["None","कुछ भी नहीं",10]
-]
-},
-
-// 7
-{
-q:"Do you clean northeast corner (Ishaan)?",
-h:"क्या आप ईशान कोण साफ रखते हैं?",
-options:[
-["Never","कभी नहीं",1],
-["Rarely","बहुत कम",3],
-["Monthly","महीने में एक बार",6],
-["Weekly","हर हफ्ते",8],
-["Daily","रोज",10]
-]
-},
-
-// Add more UNIQUE questions
-{
-q:"Do you wake up at fixed time?",
+q:"Do you wake up at a fixed time?",
 h:"क्या आप रोज एक समय पर उठते हैं?",
 options:[
-["No","नहीं",2],
+["No — random","नहीं",2],
 ["Sometimes","कभी-कभी",5],
 ["Yes","हाँ",8],
-["Strict daily","रोज same time",10]
+["Strict daily discipline","रोज same time",10]
 ]
 },
-
 {
 q:"Do you delay important tasks?",
 h:"क्या आप जरूरी काम टालते हैं?",
@@ -174,112 +63,149 @@ options:[
 ["Never","कभी नहीं",10]
 ]
 },
-
 {
-q:"Do you manage your expenses?",
-h:"क्या आप खर्चों का हिसाब रखते हैं?",
+q:"Do you plan your day?",
+h:"क्या आप अपने दिन की योजना बनाते हैं?",
+options:[
+["No plan","कोई plan नहीं",2],
+["Rough idea","थोड़ा plan",5],
+["Daily plan","रोज plan",8],
+["Strict schedule","strict routine",10]
+]
+},
+{
+q:"Do you track your expenses?",
+h:"क्या आप खर्च track करते हैं?",
 options:[
 ["No","नहीं",2],
 ["Sometimes","कभी-कभी",5],
 ["Yes","हाँ",8],
-["Strict tracking","पूरी tracking",10]
+["Detailed tracking","पूरी tracking",10]
 ]
-}
-
-];
-
-// Fill to 50 with variations (non identical)
-while(questions.length<50){
-questions.push({
-q:"Do you take daily action to improve your income?",
-h:"क्या आप रोज अपनी income बढ़ाने के लिए काम करते हैं?",
+},
+{
+q:"Do you save money regularly?",
+h:"क्या आप पैसे बचाते हैं?",
 options:[
-["No — only thinking","नहीं — सिर्फ सोचता हूँ",2],
+["No savings","नहीं",2],
 ["Sometimes","कभी-कभी",5],
-["Yes — consistent","हाँ",8],
-["Daily disciplined effort","रोज मेहनत",10]
+["Regular savings","हाँ",8],
+["Strict saving habit","discipline से",10]
 ]
-});
-}
+},
+{
+q:"Do you invest money?",
+h:"क्या आप निवेश करते हैं?",
+options:[
+["No","नहीं",2],
+["Learning","सीख रहा हूँ",5],
+["Yes","हाँ",8],
+["Consistent investor","regular",10]
+]
+},
 
-function render(){
-let q=questions[current];
+/* 11–20 LIFESTYLE */
+{
+q:"Do you exercise regularly?",
+h:"क्या आप exercise करते हैं?",
+options:[
+["Never","कभी नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Weekly","हर हफ्ते",8],
+["Daily","रोज",10]
+]
+},
+{
+q:"Do you eat junk food often?",
+h:"क्या आप junk food खाते हैं?",
+options:[
+["Daily","रोज",1],
+["Often","अक्सर",3],
+["Sometimes","कभी-कभी",6],
+["Rarely","बहुत कम",10]
+]
+},
+{
+q:"Do you maintain personal hygiene?",
+h:"क्या आप साफ-सफाई रखते हैं?",
+options:[
+["Poor","कम",2],
+["Average","ठीक-ठाक",5],
+["Good","अच्छा",8],
+["Excellent","बहुत अच्छा",10]
+]
+},
+{
+q:"Do you keep your bed organized?",
+h:"क्या आप बिस्तर ठीक रखते हैं?",
+options:[
+["Never","कभी नहीं",1],
+["Sometimes","कभी-कभी",5],
+["Daily","रोज",8],
+["Perfect daily","हमेशा",10]
+]
+},
+{
+q:"Do you waste time unnecessarily?",
+h:"क्या आप समय बर्बाद करते हैं?",
+options:[
+["Always","हमेशा",1],
+["Often","अक्सर",3],
+["Sometimes","कभी-कभी",6],
+["Rarely","बहुत कम",10]
+]
+},
+{
+q:"Do you finish what you start?",
+h:"क्या आप काम पूरा करते हैं?",
+options:[
+["Never","कभी नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Mostly","ज्यादातर",8],
+["Always","हमेशा",10]
+]
+},
+{
+q:"Do you learn new skills?",
+h:"क्या आप नई skills सीखते हैं?",
+options:[
+["No","नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Regularly","रोज",8],
+["Consistently","लगातार",10]
+]
+},
+{
+q:"Do you read books?",
+h:"क्या आप किताबें पढ़ते हैं?",
+options:[
+["Never","कभी नहीं",2],
+["Rarely","बहुत कम",5],
+["Sometimes","कभी-कभी",8],
+["Regularly","रोज",10]
+]
+},
+{
+q:"Do you feel focused during work?",
+h:"क्या आप काम में focused रहते हैं?",
+options:[
+["No","नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Yes","हाँ",8],
+["Deep focus","पूरी focus",10]
+]
+},
+{
+q:"Do you complete tasks on time?",
+h:"क्या आप काम समय पर पूरा करते हैं?",
+options:[
+["No","नहीं",2],
+["Sometimes","कभी-कभी",5],
+["Yes","हाँ",8],
+["Always","हमेशा",10]
+]
+},
 
-let html=`<div class="card">
-<p>${current+1}/50</p>
-<h3>${q.q}</h3>
-<div class="small">${q.h}</div>
-`;
-
-q.options.forEach(o=>{
-html+=`
-<label class="radio-option">
-<input type="radio" name="q" onclick="save(${o[2]})">
-<div>
-<div>${o[0]}</div>
-<div class="small">${o[1]}</div>
-</div>
-</label>`;
-});
-
-html+=`
-<button onclick="prev()">Back</button>
-<button onclick="next()">Next</button>
-</div>`;
-
-app.innerHTML=html;
-}
-
-function save(v){answers[current]=v;}
-
-function next(){
-if(current<49){current++;render();}
-else showResult();
-}
-
-function prev(){
-if(current>0){current--;render();}
-}
-
-function showResult(){
-let total=Object.values(answers).reduce((a,b)=>a+b,0);
-let percent=Math.round((total/500)*100);
-
-app.innerHTML=`
-<div class="card">
-<h2>Score: ${percent}%</h2>
-
-<p class="red">
-Sri Suktam: Lakshmi leaves unclean homes.<br>
-Vastu Shastra: Junk invites Shani → poverty.<br>
-Atharva Veda: Disorganized life destroys wealth.
-</p>
-
-<p>
-If you continue like this, your future income is already decided.
-</p>
-
-<button onclick="showPlan()">I Want to Become Rich</button>
-</div>`;
-}
-
-function showPlan(){
-app.innerHTML=`
-<div class="card">
-<h2>Action Plan</h2>
-
-<ul>
-<li class="red">Messy room → Shani energy → clean in 24h</li>
-<li class="red">Scrolling → Rahu illusion → reduce daily</li>
-<li class="green">Wake early → discipline builds wealth</li>
-</ul>
-
-<button onclick="alert('Start now. No excuses.')">I Will Start Today</button>
-</div>`;
-}
-
-render();
-</script>
-</body>
-</html>
+/* Continue similarly... up to 50 */
+];
 ```
