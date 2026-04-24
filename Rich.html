@@ -1,0 +1,335 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sampatti Dosh Audit - अमीर बनने का रास्ता</title>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background:#0b0f14;
+    color:#eee;
+}
+
+.container {
+    max-width:600px;
+    margin:auto;
+    padding:20px;
+}
+
+.progress {
+    height:10px;
+    background:#222;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:15px;
+}
+
+.progress-bar {
+    height:100%;
+    background:linear-gradient(90deg,#00ff99,#ffd700);
+    width:0%;
+}
+
+button {
+    background:#00ff99;
+    border:none;
+    padding:10px 20px;
+    margin:10px 5px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.red {color:#ff4d4d;}
+.green {color:#00ff99;}
+.small {font-size:12px;color:#aaa;}
+
+.radio-option {
+    display:block;
+    margin:10px 0;
+    padding:10px;
+    background:#111;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.money {
+    position:absolute;
+    color:gold;
+    font-size:14px;
+    pointer-events:none;
+    animation:fly 0.6s forwards;
+}
+
+@keyframes fly {
+    0% {opacity:1; transform:translateY(0);}
+    100% {opacity:0; transform:translateY(-60px);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app"></div>
+
+<script>
+let current = 0;
+let answers = JSON.parse(localStorage.getItem("answers")) || {};
+const totalQuestions = 50;
+
+function moneyBurst(x,y){
+    for(let i=0;i<6;i++){
+        let el = document.createElement("div");
+        el.className="money";
+        el.innerText="₹";
+        el.style.left=x+"px";
+        el.style.top=y+"px";
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(),600);
+    }
+}
+
+// QUESTIONS
+const questions = [
+{
+q:"How much do you hustle to earn money?",
+h:"आप पैसे कमाने के लिए कितना मेहनत करते हो?",
+options:[
+["Very little",2],
+["Sometimes",4],
+["Daily",7],
+["I grind 10+ hours",10]
+]
+},
+{
+q:"Do you think your current daily routine will make you rich in 5 years?",
+h:"क्या आपकी दिनचर्या आपको 5 साल में अमीर बनाएगी?",
+options:[
+["Yes",8],
+["No",2],
+["I don't think",3],
+["I hope so",4]
+]
+},
+{
+q:"How many hours do you scroll YouTube/Instagram/Facebook per day?",
+h:"आप रोज कितना सोशल मीडिया चलाते हो?",
+options:[
+["0-1",10],
+["2-3",6],
+["4-5",3],
+["6+",1]
+]
+},
+{
+q:"Do you keep your room messy?",
+h:"क्या आपका कमरा गंदा रहता है?",
+options:[
+["1",1],["2",2],["3",3],["4",4],["5",5],
+["6",6],["7",7],["8",8],["9",9],["10",10]
+]
+},
+{
+q:"Do you pray to remove Pitru Dosha or Shani Dosh?",
+h:"क्या आप पितृ दोष या शनि दोष के लिए प्रार्थना करते हैं?",
+options:[
+["Yes",10],["No",2],["Don't know",3]
+]
+},
+{
+q:"How often do you clean your house's northeast corner (Ishaan Kon)?",
+h:"आप ईशान कोण कितनी बार साफ करते हो?",
+options:[
+["Never",1],["Once a year",2],["Once a month",5],["Weekly",8],["Daily",10]
+]
+},
+{
+q:"Do you have broken items, unused furniture, or cobwebs in your home?",
+h:"क्या आपके घर में टूटी चीजें या कबाड़ है?",
+options:[
+["Yes, many",1],["A few",4],["No, I clean regularly",10]
+]
+}
+];
+
+// Fill to 50
+while(questions.length < 50){
+    questions.push({
+        q:"Do you take action daily toward financial growth?",
+        h:"क्या आप रोज पैसे कमाने के लिए काम करते हैं?",
+        options:[
+            ["No",2],
+            ["Sometimes",5],
+            ["Yes",8],
+            ["Consistently",10]
+        ]
+    });
+}
+
+function renderQuestion(){
+    let q = questions[current];
+
+    let warning = "";
+    if(current > 10 && current < 25){
+        warning = `<p class="red">⚠️ Your answers show dangerous financial patterns...</p>`;
+    }
+    if(current > 25){
+        warning = `<p class="red">⚠️ You are close to exposing your biggest mistake...</p>`;
+    }
+
+    let html = `
+    <div class="progress">
+      <div class="progress-bar" style="width:${(current/50)*100}%"></div>
+    </div>
+    <p>${current+1}/50</p>
+    ${warning}
+    <h3>${q.q}</h3>
+    <div class="small">${q.h}</div>
+    `;
+
+    q.options.forEach((opt)=>{
+        html += `
+        <label class="radio-option">
+        <input type="radio" name="q" value="${opt[1]}"
+        ${answers[current]==opt[1]?"checked":""}
+        onclick="selectAnswer(event,${opt[1]})">
+        ${opt[0]}
+        </label>`;
+    });
+
+    html += `
+    <button onclick="prev()">Previous</button>
+    <button onclick="next()">Next</button>
+    `;
+
+    app.innerHTML = html;
+}
+
+function selectAnswer(e,val){
+    answers[current]=val;
+    localStorage.setItem("answers",JSON.stringify(answers));
+    moneyBurst(e.clientX,e.clientY);
+}
+
+function next(){
+    if(current<49){
+        current++;
+        renderQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prev(){
+    if(current>0){
+        current--;
+        renderQuestion();
+    }
+}
+
+// RESULT PAGE
+function showResult(){
+    let total=0;
+    Object.values(answers).forEach(v=>total+=v||0);
+
+    let percent = Math.round((total/500)*100);
+
+    let level = percent<30?"Low":percent<60?"Medium":percent<85?"High":"Very High";
+
+    app.innerHTML = `
+    <h2>Your Score: ${total}/500</h2>
+    <h3>${percent}% → ${level} Wealth Probability</h3>
+
+    <p class="red">
+    You are not busy — you are distracted.<br>
+    You are not tired — you are undisciplined.<br>
+    If nothing changes, you will repeat this same life for the next 5 years.
+    </p>
+
+    <button onclick="shareResult()">Share Result</button><br><br>
+
+    <button onclick="showPlan()">
+    मैं अमीर बनना चाहता हूँ / I Want to Become Rich
+    </button>
+    `;
+}
+
+// SHARE
+function shareResult(){
+    let percent = Math.round((Object.values(answers).reduce((a,b)=>a+b,0)/500)*100);
+
+    let text = `I got ${percent}% Wealth Probability 😬
+This tool exposed my habits badly. Try it.`;
+
+    navigator.clipboard.writeText(text);
+    alert("Copied. Paste on WhatsApp or Instagram.");
+}
+
+// PLAN PAGE
+function showPlan(){
+
+    let issues = [];
+    let tasks = [];
+
+    if(answers[2] <= 3){
+        issues.push("You scroll excessively — this is silent self-sabotage.");
+        tasks.push(["Scrolling","Reduce by 1 hour & learn skill","Daily"]);
+    }
+
+    if(answers[3] <= 4){
+        issues.push("Your room is messy. Discipline starts from environment.");
+        tasks.push(["Messy room","Deep clean","24 hours"]);
+    }
+
+    if(answers[6] <= 4){
+        issues.push("Broken items = broken money flow.");
+        tasks.push(["Broken items","Remove all","72 hours"]);
+    }
+
+    if(answers[0] <= 4){
+        issues.push("Low effort = low income. Simple.");
+        tasks.push(["Effort","Work 2 focused hours daily","Daily"]);
+    }
+
+    if(answers[4] <= 3){
+        issues.push("No discipline ritual = unstable mindset.");
+        tasks.push(["Discipline","5 min daily prayer/quiet time","Daily"]);
+    }
+
+    let issueHTML = issues.map(i=>`<li class="red">${i}</li>`).join("");
+
+    let taskHTML = tasks.map(t=>`
+    <tr>
+        <td>${t[0]}</td>
+        <td class="green">${t[1]}</td>
+        <td>${t[2]}</td>
+    </tr>
+    `).join("");
+
+    app.innerHTML = `
+    <h2>तुम्हारी गरीबी के कारण / Why You Are Still Broke</h2>
+    <ul>${issueHTML}</ul>
+
+    <h3 class="green">Action Plan</h3>
+
+    <table border="1" cellpadding="8">
+    <tr><th>Problem</th><th>Task</th><th>Deadline</th></tr>
+    ${taskHTML}
+    </table>
+
+    <button onclick="finalPromise()">मैं शुरू करूंगा / I Will Start Today</button>
+    `;
+}
+
+function finalPromise(){
+    alert("Shani has noted your promise. Lakshmi will return in 21 days.");
+}
+
+renderQuestion();
+</script>
+
+</body>
+</html>
