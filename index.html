@@ -1,74 +1,70 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sampatti Dosh Audit - अमीर बनने का रास्ता</title>
+<title>Sampatti Audit</title>
 
 <style>
-:root{
-  --bg1:#0b0f14;
-  --bg2:#020617;
-  --gold:#ffd700;
-  --green:#00ff99;
-  --red:#ff4d4d;
-}
 body{
-  margin:0;
-  font-family:Segoe UI, system-ui, -apple-system, Arial;
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #1f2937, transparent 60%),
-    radial-gradient(900px 400px at 80% 10%, rgba(255,215,0,0.08), transparent 60%),
-    linear-gradient(180deg, var(--bg1), var(--bg2));
-  color:#eee;
+margin:0;
+font-family:Segoe UI;
+background: radial-gradient(circle at top,#111827,#020617);
+color:#fff;
 }
-.container{max-width:720px;margin:auto;padding:18px;}
-.card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,215,0,0.25);
-  border-radius:14px;
-  padding:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
-}
-h2,h3{margin:10px 0 6px;}
-.small{font-size:12px;color:#b7bcc6}
-.muted{color:#9aa3b2}
-.red{color:var(--red)}
-.green{color:var(--green)}
 
-.progress{height:8px;background:#1b2230;border-radius:10px;overflow:hidden;margin-bottom:12px}
-.bar{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));width:0%}
+.container{max-width:700px;margin:auto;padding:20px;}
+
+.card{
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,215,0,0.25);
+padding:20px;
+border-radius:12px;
+}
 
 .radio{
-  display:flex;gap:12px;align-items:flex-start;
-  padding:12px;border-radius:12px;margin:10px 0;
-  border:1px solid rgba(255,215,0,0.15);
-  background:rgba(255,255,255,0.03);
-  cursor:pointer;
+display:flex;
+gap:12px;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:1px solid rgba(255,215,0,0.15);
+cursor:pointer;
 }
-.radio:hover{border-color:var(--gold);background:rgba(255,215,0,0.06)}
-.radio input{margin-top:5px;accent-color:#ffd700}
-.opt-title{font-weight:600}
-.opt-sub{font-size:12px;color:#aab1bd}
 
-.row{display:flex;gap:10px;flex-wrap:wrap}
+.radio:hover{
+border-color:#ffd700;
+background:rgba(255,215,0,0.05);
+}
+
+.small{font-size:12px;color:#aaa;}
+.red{color:#ff6b6b;}
+.green{color:#00ff99;}
+
 button{
-  background:linear-gradient(90deg,var(--green),var(--gold));
-  border:none;padding:10px 16px;border-radius:8px;
-  font-weight:700;cursor:pointer;margin-top:12px;
-}
-.btn-ghost{
-  background:transparent;border:1px solid rgba(255,215,0,0.3);color:#ddd
+background:linear-gradient(90deg,#00ff99,#ffd700);
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+margin-top:15px;
 }
 
-.money{
-  position:fixed;z-index:9999;
-  font-size:14px;pointer-events:none;opacity:0.9;
-  transition:all .6s ease-out;
+.score{
+font-size:32px;
+color:#ffd700;
+font-weight:bold;
 }
-.table{width:100%;border-collapse:collapse;margin-top:10px}
-.table th,.table td{border:1px solid rgba(255,215,0,0.2);padding:8px}
-.badge{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,215,0,0.3);margin-right:6px}
+
+.reason-box{
+background:rgba(255,255,255,0.03);
+border-left:3px solid gold;
+padding:10px;
+margin-top:10px;
+font-size:13px;
+}
 </style>
 </head>
 
@@ -76,689 +72,234 @@ button{
 <div class="container" id="app"></div>
 
 <script>
-const TOTAL = 50;
-let current = 0;
-let answers = JSON.parse(localStorage.getItem('answers')||'{}');
-let user = JSON.parse(localStorage.getItem('user')||'{}');
 
-function burst(x,y){
-  const syms=["₹","$","€","£"];
-  for(let i=0;i<7;i++){
-    const el=document.createElement('div');
-    el.className='money';
-    el.textContent=syms[Math.floor(Math.random()*syms.length)];
-    el.style.left=x+'px'; el.style.top=y+'px';
-    document.body.appendChild(el);
-    const dx=(Math.random()*100)-50, dy=-(Math.random()*90+20);
-    requestAnimationFrame(()=>{
-      el.style.transform=`translate(${dx}px,${dy}px)`;
-      el.style.opacity=0;
-    });
-    setTimeout(()=>el.remove(),600);
-  }
-}
+let current=0;
+let answers={};
+let user={};
 
-/* ---------- START ---------- */
+// 🔥 START
 function start(){
-  app.innerHTML = `
-  <div class="card">
-    <h2>Wealth & Destiny Audit</h2>
-    <p class="muted">यह ऑडिट आपकी आदतों, वातावरण और अनुशासन को जाँचता है। सच सुनने के लिए तैयार रहें।</p>
-    <input id="name" placeholder="Enter your name" style="width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0;">
-    <input id="age" placeholder="Enter your age" type="number" style="width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0;">
-    <button onclick="begin()">Start Audit</button>
-  </div>`;
+app.innerHTML=`
+<div class="card">
+<h2>Wealth Audit</h2>
+<input id="name" placeholder="Name"><br><br>
+<input id="age" placeholder="Age"><br><br>
+<button onclick="begin()">Start</button>
+</div>`;
 }
 
 function begin(){
-  const name = document.getElementById('name').value.trim();
-  const age = document.getElementById('age').value.trim();
-  if(!name || !age){ alert('Enter name & age'); return; }
-  user = {name, age};
-  localStorage.setItem('user', JSON.stringify(user));
-  current = 0;
-  render();
+let n=document.getElementById("name").value;
+let a=document.getElementById("age").value;
+if(!n||!a){alert("Enter details");return;}
+user={n,a};
+render();
 }
 
-/* ---------- QUESTIONS (50, detailed) ---------- */
-const Q = [
-/* 1–10: foundation */
+// 🔥 QUESTIONS (with reasoning)
+const questions=[
 {
 q:"How much focused effort do you put daily toward earning money or building income skills?",
-h:"आप रोज पैसे कमाने या income skill बनाने के लिए कितना focused effort करते हैं?",
+h:"आप रोज पैसे कमाने के लिए कितना प्रयास करते हैं?",
+reason:"Your income grows only if your effort grows. No effort = no money growth.",
 o:[
-["Very little — I mostly think about ideas but don’t execute","बहुत कम — मैं सोचता ज्यादा हूँ, करता कम हूँ",2],
-["Sometimes — effort depends on mood and energy","कभी-कभी — मेहनत mood पर निर्भर करती है",4],
-["Daily — I work consistently for a few hours","रोज — मैं कुछ घंटे लगातार काम करता हूँ",7],
-["Intense — I plan and execute 8–10+ focused hours","बहुत ज्यादा — मैं 8–10+ घंटे focused काम करता हूँ",10]
-]
-},
-{
-q:"Do you believe your current daily routine (sleep, work, habits) can realistically make you financially strong in the next 5 years?",
-h:"क्या आपकी वर्तमान दिनचर्या (नींद, काम, आदतें) अगले 5 साल में आपको आर्थिक रूप से मजबूत बना सकती है?",
-o:[
-["No — it’s random and unplanned","नहीं — यह बेतरतीब और बिना योजना के है",2],
-["Unlikely — I haven’t fixed my routine yet","संभव नहीं — मैंने अभी तक सुधार नहीं किया",3],
-["Maybe — I’m trying but not consistent","शायद — कोशिश कर रहा हूँ पर निरंतरता नहीं है",5],
-["Yes — it’s structured and improving","हाँ — यह व्यवस्थित है और बेहतर हो रही है",9]
-]
-},
-{
-q:"On average, how many hours per day do you spend on social media (YouTube/Instagram/Facebook) for non-productive use?",
-h:"औसतन आप रोज सोशल मीडिया (YouTube/Instagram/Facebook) पर गैर-उत्पादक काम के लिए कितना समय देते हैं?",
-o:[
-["6+ hours — I often lose track of time","6+ घंटे — समय का पता नहीं चलता",1],
-["4–5 hours — a big portion of my day","4–5 घंटे — दिन का बड़ा हिस्सा",3],
-["2–3 hours — controlled but still high","2–3 घंटे — नियंत्रित पर अभी भी ज्यादा",6],
-["0–1 hour — minimal distraction","0–1 घंटे — बहुत कम विचलन",10]
-]
-},
-{
-q:"How would you honestly rate the cleanliness and order of your room or personal space?",
-h:"आप अपने कमरे/व्यक्तिगत स्थान की साफ-सफाई और व्यवस्था को कैसे आंकेंगे?",
-o:[
-["Very messy — clothes, items scattered most of the time","बहुत गंदा — सामान बिखरा रहता है",1],
-["Often messy — cleaning is irregular","अक्सर गंदा — सफाई अनियमित",3],
-["Average — sometimes clean, sometimes not","औसत — कभी साफ, कभी नहीं",6],
-["Mostly clean — I maintain it regularly","ज्यादातर साफ — नियमित रखरखाव",8],
-["Very clean daily — organized and disciplined","हमेशा साफ — व्यवस्थित और अनुशासित",10]
-]
-},
-{
-q:"Do you maintain a fixed wake-up time and morning routine (like making your bed, basic cleaning, planning the day)?",
-h:"क्या आप निश्चित समय पर उठते हैं और सुबह की दिनचर्या (बिस्तर ठीक करना, सफाई, दिन की योजना) रखते हैं?",
-o:[
-["No — I wake up at random times","नहीं — मैं अलग-अलग समय पर उठता हूँ",2],
-["Sometimes — only on certain days","कभी-कभी — कुछ दिनों में ही",5],
-["Mostly — I follow it on most days","ज्यादातर — अधिकतर दिनों में",8],
-["Strict — fixed time and consistent routine daily","सख्त — रोज निश्चित समय और नियमित दिनचर्या",10]
-]
-},
-{
-q:"When an important task comes up, how often do you postpone or delay it without a valid reason?",
-h:"जब कोई महत्वपूर्ण काम आता है, तो आप उसे बिना उचित कारण के कितनी बार टालते हैं?",
-o:[
-["Almost always — I keep delaying","लगभग हमेशा — मैं टालता रहता हूँ",1],
-["Often — delay happens frequently","अक्सर — देरी होती है",3],
-["Sometimes — depends on situation","कभी-कभी — स्थिति पर निर्भर",6],
-["Rarely/Never — I act on time","बहुत कम/कभी नहीं — मैं समय पर करता हूँ",10]
-]
-},
-{
-q:"Do you actively plan your day with clear tasks and priorities before or at the start of the day?",
-h:"क्या आप दिन की शुरुआत में अपने कार्यों और प्राथमिकताओं की स्पष्ट योजना बनाते हैं?",
-o:[
-["No plan — I go with the flow","कोई योजना नहीं — जैसे चलता है वैसा",2],
-["Loose plan — I have a rough idea","ढीली योजना — बस अंदाज़ा होता है",5],
-["Daily plan — I list key tasks","दैनिक योजना — मुख्य काम लिखता हूँ",8],
-["Structured — time-blocked schedule","संरचित — समय के अनुसार योजना",10]
-]
-},
-{
-q:"How well do you track and control your expenses and spending habits?",
-h:"आप अपने खर्चों और खर्च करने की आदतों को कितनी अच्छी तरह ट्रैक और नियंत्रित करते हैं?",
-o:[
-["Not at all — I spend without tracking","बिल्कुल नहीं — बिना हिसाब खर्च",2],
-["Sometimes — partial awareness","कभी-कभी — आंशिक जानकारी",5],
-["Yes — I track regularly","हाँ — नियमित ट्रैक करता हूँ",8],
-["Strict — detailed tracking and control","सख्त — विस्तृत ट्रैकिंग और नियंत्रण",10]
-]
-},
-{
-q:"Do you consistently save a portion of your income every month, regardless of income size?",
-h:"क्या आप आय के आकार की परवाह किए बिना हर महीने कुछ बचत करते हैं?",
-o:[
-["No savings — I spend most of it","कोई बचत नहीं — ज्यादातर खर्च",2],
-["Occasionally — only when possible","कभी-कभी — जब संभव हो",5],
-["Regular savings — fixed portion","नियमित बचत — तय हिस्सा",8],
-["Disciplined — savings first, then expenses","अनुशासित — पहले बचत, फिर खर्च",10]
-]
-},
-{
-q:"What is your current approach to investing money for long-term growth?",
-h:"दीर्घकालिक वृद्धि के लिए पैसे निवेश करने का आपका वर्तमान तरीका क्या है?",
-o:[
-["I don’t invest at all","मैं निवेश नहीं करता",2],
-["Learning phase — not started properly","सीख रहा हूँ — ठीक से शुरू नहीं किया",5],
-["I invest occasionally","मैं कभी-कभी निवेश करता हूँ",8],
-["Consistent investor — planned and regular","नियमित निवेश — योजनाबद्ध",10]
-]
-},
-
-/* 11–20: lifestyle discipline */
-{
-q:"How regularly do you exercise or engage in physical activity that improves your energy and discipline?",
-h:"आप कितनी नियमितता से व्यायाम या शारीरिक गतिविधि करते हैं जो ऊर्जा और अनुशासन बढ़ाती है?",
-o:[
-["Never — no physical activity","कभी नहीं — कोई गतिविधि नहीं",2],
-["Sometimes — irregular","कभी-कभी — अनियमित",5],
-["Weekly — few times a week","साप्ताहिक — कुछ दिन",8],
-["Daily — consistent routine","रोज — नियमित",10]
-]
-},
-{
-q:"How frequently do you consume junk food or unhealthy meals that affect your energy and focus?",
-h:"आप कितनी बार जंक फूड या अस्वस्थ भोजन लेते हैं जो ऊर्जा और फोकस को प्रभावित करता है?",
-o:[
-["Daily — very frequent","रोज — बहुत अधिक",1],
-["Often — several times a week","अक्सर — हफ्ते में कई बार",3],
-["Sometimes — controlled","कभी-कभी — नियंत्रित",6],
-["Rarely — mostly healthy diet","बहुत कम — अधिकतर स्वस्थ भोजन",10]
-]
-},
-{
-q:"How would you rate your personal hygiene (bathing, grooming, clean clothes, etc.) on a daily basis?",
-h:"आप अपनी व्यक्तिगत साफ-सफाई (नहाना, ग्रूमिंग, साफ कपड़े आदि) को कैसे आंकेंगे?",
-o:[
-["Poor — inconsistent hygiene","खराब — अनियमित",2],
-["Average — sometimes maintained","औसत — कभी-कभी",5],
-["Good — mostly maintained","अच्छा — अधिकतर",8],
-["Excellent — disciplined daily hygiene","उत्कृष्ट — रोज अनुशासित",10]
-]
-},
-{
-q:"Do you make your bed and organize your immediate surroundings soon after waking up?",
-h:"क्या आप उठने के बाद अपना बिस्तर और आसपास का स्थान व्यवस्थित करते हैं?",
-o:[
-["Never — I leave it as it is","कभी नहीं — जैसा है वैसा",1],
-["Sometimes — when I feel like it","कभी-कभी — मन होने पर",5],
-["Mostly — I try to keep it tidy","ज्यादातर — साफ रखने की कोशिश",8],
-["Always — first task of the day","हमेशा — दिन का पहला काम",10]
-]
-},
-{
-q:"How often do you waste time on unplanned activities that don’t contribute to your goals?",
-h:"आप कितनी बार ऐसे अनियोजित कामों में समय बर्बाद करते हैं जो आपके लक्ष्यों में मदद नहीं करते?",
-o:[
-["Very often — happens daily","बहुत अधिक — रोज होता है",1],
-["Often — multiple times a week","अक्सर — हफ्ते में कई बार",3],
-["Sometimes — manageable","कभी-कभी — नियंत्रित",6],
-["Rarely — I stay focused","बहुत कम — मैं केंद्रित रहता हूँ",10]
-]
-},
-{
-q:"Do you usually complete the tasks you start, or do you leave them unfinished midway?",
-h:"क्या आप शुरू किए गए कामों को पूरा करते हैं या बीच में छोड़ देते हैं?",
-o:[
-["Rarely finish — many incomplete tasks","कम ही पूरा — कई अधूरे काम",2],
-["Sometimes finish — depends","कभी-कभी — निर्भर करता है",5],
-["Mostly finish — I try to close tasks","ज्यादातर — पूरा करने की कोशिश",8],
-["Always finish — strong completion habit","हमेशा — मजबूत आदत",10]
-]
-},
-{
-q:"How actively do you invest time in learning new skills that can increase your income?",
-h:"आप नई skills सीखने में कितना समय लगाते हैं जो आपकी आय बढ़ा सकती हैं?",
-o:[
-["Not at all — no skill learning","बिल्कुल नहीं — कोई सीख नहीं",2],
-["Occasionally — irregular learning","कभी-कभी — अनियमित",5],
-["Regularly — consistent learning","नियमित — लगातार सीखना",8],
-["Daily — focused skill building","रोज — focused सीखना",10]
-]
-},
-{
-q:"How often do you read books or long-form content that improves your thinking and knowledge?",
-h:"आप कितनी बार किताबें या लंबी सामग्री पढ़ते हैं जो आपकी सोच और ज्ञान बढ़ाती हैं?",
-o:[
-["Never — no reading habit","कभी नहीं — पढ़ने की आदत नहीं",2],
-["Rarely — once in a while","बहुत कम — कभी-कभार",5],
-["Sometimes — few times a week","कभी-कभी — हफ्ते में कुछ बार",8],
-["Regularly — daily/consistent reading","नियमित — रोज पढ़ना",10]
-]
-},
-{
-q:"When you work, how strong is your focus without getting distracted by phone or surroundings?",
-h:"काम करते समय आपका फोकस कितना मजबूत होता है, बिना फोन/आसपास से विचलित हुए?",
-o:[
-["Low — easily distracted","कम — जल्दी भटकता हूँ",2],
-["Medium — some distractions","मध्यम — कुछ विचलन",5],
-["High — mostly focused","उच्च — अधिकतर केंद्रित",8],
-["Deep focus — long uninterrupted sessions","गहरा फोकस — लंबे समय तक",10]
-]
-},
-{
-q:"Do you complete your important commitments and deadlines on time?",
-h:"क्या आप अपने महत्वपूर्ण काम और समय-सीमा समय पर पूरी करते हैं?",
-o:[
-["Often miss deadlines","अक्सर समय सीमा चूकता हूँ",2],
-["Sometimes late","कभी-कभी देर",5],
-["Mostly on time","ज्यादातर समय पर",8],
-["Always on time — disciplined","हमेशा समय पर — अनुशासित",10]
-]
-},
-
-/* 21–30: money + behavior */
-{
-q:"Do you have a clear financial goal (income target, savings target, or net worth target)?",
-h:"क्या आपके पास स्पष्ट वित्तीय लक्ष्य है (आय, बचत या नेट वर्थ लक्ष्य)?",
-o:[
-["No clear goal","कोई स्पष्ट लक्ष्य नहीं",2],
-["Rough idea","थोड़ा अंदाज़ा",5],
-["Defined goal","परिभाषित लक्ष्य",8],
-["Written + tracked goal","लिखा हुआ और ट्रैक किया गया",10]
-]
-},
-{
-q:"How often do you review your financial progress (income, savings, investments)?",
-h:"आप अपनी वित्तीय प्रगति (आय, बचत, निवेश) कितनी बार देखते हैं?",
-o:[
-["Never review","कभी नहीं देखते",2],
-["Occasionally","कभी-कभी",5],
-["Monthly review","मासिक समीक्षा",8],
-["Weekly/detailed review","साप्ताहिक/विस्तृत समीक्षा",10]
-]
-},
-{
-q:"Do you have any active source of additional income apart from your primary job?",
-h:"क्या आपके पास मुख्य काम के अलावा अतिरिक्त आय का कोई स्रोत है?",
-o:[
-["No additional income","कोई अतिरिक्त आय नहीं",2],
-["Trying to build one","बनाने की कोशिश",5],
-["One additional source","एक अतिरिक्त स्रोत",8],
-["Multiple sources","कई स्रोत",10]
-]
-},
-{
-q:"How disciplined are you in avoiding impulsive purchases (buying without planning)?",
-h:"आप बिना सोचे-समझे खरीदारी (impulsive purchases) से कितनी अच्छी तरह बचते हैं?",
-o:[
-["Very impulsive — frequent","बहुत ज्यादा — बार-बार",1],
-["Often impulsive","अक्सर impulsive",3],
-["Sometimes — controlled","कभी-कभी — नियंत्रित",6],
-["Rarely — planned purchases","बहुत कम — योजना के साथ",10]
-]
-},
-{
-q:"Do you maintain any system to increase your income (side projects, freelancing, business ideas)?",
-h:"क्या आप आय बढ़ाने के लिए कोई सिस्टम रखते हैं (साइड प्रोजेक्ट, फ्रीलांस, बिज़नेस आइडिया)?",
-o:[
-["No system","कोई सिस्टम नहीं",2],
-["Occasional attempts","कभी-कभी प्रयास",5],
-["Active efforts","सक्रिय प्रयास",8],
-["Structured system","संगठित सिस्टम",10]
-]
-},
-{
-q:"How often do you reflect on your mistakes and improve your financial or career decisions?",
-h:"आप अपनी गलतियों पर विचार करके अपने वित्तीय/करियर निर्णयों को कितनी बार सुधारते हैं?",
-o:[
-["Rarely reflect","कम ही विचार करता हूँ",2],
-["Sometimes reflect","कभी-कभी",5],
-["Often reflect","अक्सर",8],
-["Regular deep review","नियमित गहराई से समीक्षा",10]
-]
-},
-{
-q:"Do you surround yourself with people who are focused on growth and discipline?",
-h:"क्या आप ऐसे लोगों के साथ रहते हैं जो विकास और अनुशासन पर केंद्रित हैं?",
-o:[
-["No — negative/idle circle","नहीं — नकारात्मक/आलसी माहौल",2],
-["Mixed company","मिश्रित संगति",5],
-["Mostly growth-oriented","ज्यादातर विकास उन्मुख",8],
-["Strong growth circle","मजबूत विकासशील समूह",10]
-]
-},
-{
-q:"How well do you handle stress without escaping into distractions like social media or entertainment?",
-h:"आप तनाव को बिना सोशल मीडिया/मनोरंजन में भागे कितनी अच्छी तरह संभालते हैं?",
-o:[
-["Escape immediately","तुरंत भाग जाता हूँ",2],
-["Often escape","अक्सर भागता हूँ",4],
-["Manage sometimes","कभी-कभी संभालता हूँ",7],
-["Handle calmly","शांत तरीके से संभालता हूँ",10]
-]
-},
-{
-q:"Do you maintain consistency even when you don’t feel motivated?",
-h:"क्या आप बिना motivation के भी निरंतरता बनाए रखते हैं?",
-o:[
-["No — I stop working","नहीं — काम छोड़ देता हूँ",2],
-["Sometimes continue","कभी-कभी जारी रखता हूँ",5],
-["Mostly consistent","ज्यादातर निरंतर",8],
-["Always consistent","हमेशा निरंतर",10]
-]
-},
-{
-q:"How strong is your self-control when it comes to habits (sleep, phone, food, spending)?",
-h:"आदतों (नींद, फोन, भोजन, खर्च) पर आपका self-control कितना मजबूत है?",
-o:[
-["Very weak","बहुत कमजोर",2],
-["Average","औसत",5],
-["Good","अच्छा",8],
-["Very strong","बहुत मजबूत",10]
-]
-},
-
-/* 31–40: environment (vastu/order) */
-{
-q:"How often do you clean the northeast (Ishaan) corner of your house, which is considered important in Vastu?",
-h:"आप घर के ईशान कोण (उत्तर-पूर्व) को कितनी बार साफ करते हैं?",
-o:[
-["Never — ignored","कभी नहीं — अनदेखा",1],
-["Rarely — once in months","बहुत कम — महीनों में",3],
-["Monthly — basic cleaning","मासिक — सामान्य सफाई",6],
-["Weekly — regular care","साप्ताहिक — नियमित देखभाल",8],
-["Daily — always clean","रोज — हमेशा साफ",10]
-]
-},
-{
-q:"Do you have broken items, unused furniture, or junk stored in your living space?",
-h:"क्या आपके घर में टूटी चीजें, बेकार फर्नीचर या कबाड़ रखा है?",
-o:[
-["Many broken/junk items","बहुत ज्यादा कबाड़/टूटी चीजें",1],
-["Some clutter present","कुछ कबाड़ मौजूद",4],
-["Very little clutter","बहुत कम कबाड़",7],
-["No clutter — clean space","बिल्कुल नहीं — साफ जगह",10]
-]
-},
-{
-q:"How often do you notice and remove cobwebs, dust, and hidden dirt from corners of your house?",
-h:"आप घर के कोनों में जाले, धूल और छिपी गंदगी को कितनी बार साफ करते हैं?",
-o:[
-["Never notice/clean","कभी ध्यान नहीं देता/साफ नहीं करता",1],
-["Rarely clean","बहुत कम साफ करता हूँ",4],
-["Sometimes clean","कभी-कभी साफ करता हूँ",7],
-["Regularly clean","नियमित साफ करता हूँ",10]
-]
-},
-{
-q:"How organized is your kitchen (clean utensils, no leftover mess, regular cleaning)?",
-h:"आपकी रसोई कितनी व्यवस्थित है (साफ बर्तन, कोई गंदगी नहीं, नियमित सफाई)?",
-o:[
-["Often dirty and cluttered","अक्सर गंदी और भरी हुई",1],
-["Sometimes messy","कभी-कभी गंदी",4],
-["Mostly clean","ज्यादातर साफ",8],
-["Always clean and organized","हमेशा साफ और व्यवस्थित",10]
-]
-},
-{
-q:"Do you keep your study/work area organized (no clutter, essentials arranged properly)?",
-h:"क्या आप अपना अध्ययन/कार्य क्षेत्र व्यवस्थित रखते हैं (बिना कबाड़, सामान सही जगह)?",
-o:[
-["Very cluttered","बहुत बिखरा हुआ",2],
-["Somewhat cluttered","थोड़ा बिखरा",5],
-["Mostly organized","ज्यादातर व्यवस्थित",8],
-["Fully organized","पूरी तरह व्यवस्थित",10]
-]
-},
-{
-q:"How often do you declutter your home by removing items you no longer use?",
-h:"आप कितनी बार घर का कबाड़ हटाते हैं जो अब उपयोग में नहीं आता?",
-o:[
-["Never declutter","कभी नहीं हटाता",1],
-["Rarely","बहुत कम",4],
-["Occasionally","कभी-कभी",7],
-["Regularly","नियमित रूप से",10]
-]
-},
-{
-q:"Do you ensure good ventilation and natural light in your living space?",
-h:"क्या आप अपने घर में हवा और प्राकृतिक रोशनी का ध्यान रखते हैं?",
-o:[
-["Poor ventilation/light","खराब हवा/रोशनी",2],
-["Average","औसत",5],
-["Good","अच्छा",8],
-["Excellent","बहुत अच्छा",10]
-]
-},
-{
-q:"How often do you clean your bathroom/toilet area thoroughly?",
-h:"आप बाथरूम/टॉयलेट को कितनी बार अच्छी तरह साफ करते हैं?",
-o:[
-["Rarely cleaned","बहुत कम साफ",1],
-["Sometimes cleaned","कभी-कभी साफ",5],
-["Weekly cleaned","साप्ताहिक साफ",8],
-["Very clean regularly","नियमित बहुत साफ",10]
-]
-},
-{
-q:"Do you keep entrances (main door/entry area) clean and welcoming?",
-h:"क्या आप घर के प्रवेश द्वार को साफ और व्यवस्थित रखते हैं?",
-o:[
-["Messy entrance","गंदा प्रवेश",2],
-["Average","औसत",5],
-["Clean","साफ",8],
-["Very clean & welcoming","बहुत साफ और स्वागत योग्य",10]
-]
-},
-{
-q:"How often do you maintain order in wardrobes/storage (folded clothes, organized items)?",
-h:"आप अलमारी/स्टोरेज को कितनी बार व्यवस्थित रखते हैं (कपड़े ठीक से रखे हुए)?",
-o:[
-["Disorganized","अव्यवस्थित",2],
-["Somewhat organized","कुछ हद तक",5],
-["Mostly organized","ज्यादातर व्यवस्थित",8],
-["Fully organized","पूरी तरह व्यवस्थित",10]
-]
-},
-
-/* 41–50: mindset & discipline */
-{
-q:"Do you have a daily discipline ritual (prayer, meditation, silence, journaling)?",
-h:"क्या आपके पास दैनिक अनुशासन की कोई आदत है (प्रार्थना, ध्यान, शांति, जर्नलिंग)?",
-o:[
-["No ritual","कोई आदत नहीं",2],
+["Very little","बहुत कम",2],
 ["Sometimes","कभी-कभी",5],
-["Regular","नियमित",8],
-["Daily without fail","रोज बिना चूके",10]
+["Consistent","नियमित",8],
+["Very serious","बहुत गंभीर",10]
 ]
 },
 {
-q:"Do you pray or take steps to address Pitru Dosha or Shani-related concerns if you believe in them?",
-h:"क्या आप पितृ दोष या शनि से जुड़े उपाय/प्रार्थना करते हैं (यदि आप मानते हैं)?",
+q:"On average, how many hours per day do you spend on social media for non-productive use?",
+h:"आप रोज सोशल मीडिया पर कितना समय बर्बाद करते हैं?",
+reason:"Time spent scrolling is directly taken away from income-building.",
+o:[
+["6+ hours","6+ घंटे",1],
+["4-5 hours","4-5 घंटे",3],
+["2-3 hours","2-3 घंटे",6],
+["0-1 hour","0-1 घंटे",10]
+]
+},
+{
+q:"Do you actively plan your day with clear tasks?",
+h:"क्या आप दिन की योजना बनाते हैं?",
+reason:"Unplanned days lead to unplanned (and poor) financial outcomes.",
 o:[
 ["No","नहीं",2],
-["Don’t know","पता नहीं",3],
-["Sometimes","कभी-कभी",6],
-["Yes regularly","हाँ नियमित",10]
-]
-},
-{
-q:"How strongly do you believe that your habits directly shape your financial future?",
-h:"आप कितना मानते हैं कि आपकी आदतें आपके आर्थिक भविष्य को सीधे प्रभावित करती हैं?",
-o:[
-["Not really","ज्यादा नहीं",2],
-["Somewhat","कुछ हद तक",5],
-["Strongly","मजबूती से",8],
-["Absolutely — I act on it","पूरी तरह — और मैं उस पर काम करता हूँ",10]
-]
-},
-{
-q:"When you fail or face setbacks, how quickly do you get back to disciplined action?",
-h:"असफलता या झटकों के बाद आप कितनी जल्दी अनुशासन में वापस आते हैं?",
-o:[
-["Very slow — I stay stuck","बहुत धीमा — अटका रहता हूँ",2],
-["Slow — takes time","धीमा — समय लगता है",5],
-["Moderate — I recover","मध्यम — संभल जाता हूँ",8],
-["Fast — I bounce back quickly","तेज़ — जल्दी वापसी",10]
-]
-},
-{
-q:"Do you consciously avoid negative habits that drain energy (late nights, excessive scrolling, unhealthy routines)?",
-h:"क्या आप ऊर्जा खत्म करने वाली आदतों (देर रात, ज्यादा स्क्रॉलिंग, खराब दिनचर्या) से बचते हैं?",
-o:[
-["No — I indulge often","नहीं — अक्सर करता हूँ",2],
-["Sometimes avoid","कभी-कभी बचता हूँ",5],
-["Mostly avoid","ज्यादातर बचता हूँ",8],
-["Strictly avoid","सख्ती से बचता हूँ",10]
-]
-},
-{
-q:"How clear are you about the next 12 months of your career or income growth plan?",
-h:"अगले 12 महीनों के लिए आपके करियर/आय वृद्धि की योजना कितनी स्पष्ट है?",
-o:[
-["No clarity","कोई स्पष्टता नहीं",2],
-["Rough direction","थोड़ी दिशा",5],
-["Clear plan","स्पष्ट योजना",8],
-["Detailed roadmap","विस्तृत रोडमैप",10]
-]
-},
-{
-q:"Do you regularly review and improve your routines (sleep, work blocks, habits) every week or month?",
-h:"क्या आप हर हफ्ते/महीने अपनी दिनचर्या (नींद, काम, आदतें) की समीक्षा करके सुधार करते हैं?",
-o:[
-["Never review","कभी समीक्षा नहीं",2],
-["Occasionally","कभी-कभी",5],
-["Monthly review","मासिक समीक्षा",8],
-["Weekly optimization","साप्ताहिक सुधार",10]
-]
-},
-{
-q:"How often do you take responsibility for your outcomes instead of blaming situations or people?",
-h:"आप अपने परिणामों की जिम्मेदारी कितनी बार लेते हैं, बजाय हालात या लोगों को दोष देने के?",
-o:[
-["Rarely — I blame others","कम — दूसरों को दोष",2],
 ["Sometimes","कभी-कभी",5],
-["Mostly responsible","ज्यादातर जिम्मेदारी",8],
-["Fully responsible","पूरी जिम्मेदारी",10]
+["Yes","हाँ",8],
+["Strict planning","पूरी योजना",10]
 ]
 },
 {
-q:"Do you maintain consistency in small daily habits (bed, cleaning, planning) even when no one is watching?",
-h:"क्या आप छोटे-छोटे दैनिक काम (बिस्तर, सफाई, योजना) में निरंतरता रखते हैं, भले कोई देख न रहा हो?",
+q:"Do you keep broken items in your house?",
+h:"क्या आप घर में टूटी चीजें रखते हैं?",
+reason:"Broken things represent stuck energy → stuck money.",
 o:[
-["No consistency","कोई निरंतरता नहीं",2],
-["Sometimes","कभी-कभी",5],
-["Mostly consistent","ज्यादातर निरंतर",8],
-["Always consistent","हमेशा निरंतर",10]
+["Many","बहुत",2],
+["Some","कुछ",5],
+["Rarely","कम",8],
+["None","नहीं",10]
 ]
 },
 {
-q:"How committed are you to changing your habits immediately after seeing your results today?",
-h:"आज के परिणाम देखने के बाद आप अपनी आदतें बदलने के लिए कितने प्रतिबद्ध हैं?",
+q:"How ready is your space to receive opportunities?",
+h:"क्या आपका घर तैयार है?",
+reason:"Cluttered space = cluttered opportunities.",
 o:[
-["Not committed","प्रतिबद्ध नहीं",2],
-["Thinking about it","सोच रहा हूँ",5],
-["Will start soon","जल्द शुरू करूँगा",8],
-["Starting today — no excuses","आज से शुरू — कोई बहाना नहीं",10]
+["Messy","गंदा",2],
+["Needs cleaning","सफाई चाहिए",5],
+["Clean","साफ",8],
+["Perfect","पूरी तरह साफ",10]
+]
+},
+{
+q:"Where does most of your time go every day?",
+h:"आपका समय कहाँ जाता है?",
+reason:"Your time decides your future income.",
+o:[
+["Phone","फोन",1],
+["Useless work","बेकार काम",3],
+["Job only","काम",7],
+["Growth work","growth",10]
+]
+},
+{
+q:"If your habits continue for 5 years, what will happen?",
+h:"आपकी आदतें क्या देंगी?",
+reason:"Habits = future reality.",
+o:[
+["Worse","खराब",2],
+["Same","वही",4],
+["Better","बेहतर",7],
+["Great","बहुत अच्छा",10]
+]
+},
+{
+q:"What life are you building for your family?",
+h:"आप परिवार के लिए क्या बना रहे हैं?",
+reason:"Your discipline decides your family's future.",
+o:[
+["Survival","गुज़ारा",2],
+["Better","बेहतर",5],
+["Comfort","आराम",8],
+["Rich life","अच्छी जिंदगी",10]
+]
+},
+{
+q:"If your life ended today, how would you feel?",
+h:"अंत में कैसा लगेगा?",
+reason:"This reveals if you're living intentionally or wasting time.",
+o:[
+["Regret","पछतावा",2],
+["Not enough","कम",4],
+["Okay","ठीक",7],
+["Proud","गर्व",10]
+]
+},
+{
+q:"How committed are you to changing your habits today?",
+h:"क्या आप बदलेंगे?",
+reason:"Awareness without action = no change.",
+o:[
+["No","नहीं",2],
+["Maybe","शायद",5],
+["Yes","हाँ",8],
+["100%","पूरी तरह",10]
 ]
 }
 ];
 
-/* ---------- RENDER ---------- */
+// 🔥 RENDER
 function render(){
-  const q = Q[current];
-  const progress = Math.round((current/TOTAL)*100);
+let q=questions[current];
 
-  let html = `
-  <div class="card">
-    <div class="progress"><div class="bar" style="width:${progress}%"></div></div>
-    <div class="small">${current+1}/50</div>
-    <h3>${q.q}</h3>
-    <div class="small">${q.h}</div>
-  `;
+let html=`<div class="card">
+<h3>${q.q}</h3>
+<div class="small">${q.h}</div>
+<div class="reason-box">💡 ${q.reason}</div>
+`;
 
-  q.o.forEach(opt=>{
-    const checked = answers[current]===opt[2] ? 'checked':'';
-    html += `
-    <label class="radio" onclick="choose(event, ${opt[2]})">
-      <input type="radio" name="q${current}" ${checked}>
-      <div>
-        <div class="opt-title">${opt[0]}</div>
-        <div class="opt-sub">${opt[1]}</div>
-      </div>
-    </label>`;
-  });
+q.o.forEach(opt=>{
+html+=`
+<label class="radio">
+<input type="radio" name="q" onclick="save(${opt[2]})">
+<div>
+<div>${opt[0]}</div>
+<div class="small">${opt[1]}</div>
+</div>
+</label>`;
+});
 
-  html += `
-    <div class="row">
-      <button class="btn-ghost" onclick="prev()">Back</button>
-      <button onclick="next()">Next</button>
-    </div>
-  </div>`;
+html+=`
+<button onclick="next()">Next</button>
+</div>`;
 
-  app.innerHTML = html;
+app.innerHTML=html;
 }
 
-function choose(e, val){
-  answers[current] = val;
-  localStorage.setItem('answers', JSON.stringify(answers));
-  burst(e.clientX, e.clientY);
+// 🔥 SAVE
+function save(v){
+answers[current]=v;
 }
 
+// 🔥 NEXT (block without answer)
 function next(){
-  if(current < TOTAL-1){ current++; render(); }
-  else showResult();
-}
-function prev(){
-  if(current>0){ current--; render(); }
+if(answers[current] == null){
+alert("Answer the question first");
+return;
 }
 
-/* ---------- RESULT ---------- */
+if(current<questions.length-1){
+current++;
+render();
+}else{
+showResult();
+}
+}
+
+// 🔥 RESULT
 function showResult(){
-  const total = Object.values(answers).reduce((a,b)=>a+(b||0),0);
-  const percent = Math.round((total/500)*100);
-  let level = percent<=30?'Low':percent<=60?'Medium':percent<=85?'High':'Very High';
+let total=Object.values(answers).reduce((a,b)=>a+b,0);
+let percent=Math.round((total/(questions.length*10))*100);
 
-  let insights = [];
-  if((answers[2]||0)<=3) insights.push("You spend excessive hours scrolling — that time is replacing income-building work.");
-  if((answers[3]||0)<=4) insights.push("Your room/environment is messy — discipline is not visible in your space.");
-  if((answers[21]||0)<=4) insights.push("You have clutter/broken items — your environment signals stagnation.");
-  if((answers[30]||0)<=4) insights.push("Your Ishaan (NE) corner is neglected — order and clarity are missing.");
+let msg="";
 
-  app.innerHTML = `
-  <div class="card">
-    <h2>${user.name || 'Your'} Score: ${total}/500 (${percent}%)</h2>
-    <div><span class="badge">Probability</span> ${level}</div>
-
-    <p class="red">
-      You are not busy — you are distracted.<br>
-      If nothing changes, the next 5 years will look the same.
-    </p>
-
-    <h3>Insights</h3>
-    <ul>${insights.map(i=>`<li>${i}</li>`).join('')}</ul>
-
-    <h3>Scripture Warnings</h3>
-    <p class="red">
-      “परिच्छिन्नं गृहं लक्ष्मीः न वसति अशुद्धं” — Sri Suktam (Rigveda): Lakshmi does not stay in an unclean home.<br>
-      “यत्र कूडं तत्र शनिः” — Vastu (Vishwakarma Prakash): Where there is junk, Shani resides; where Shani resides, poverty follows.<br>
-      “अव्यवस्थित गृहस्थस्य धनं विलीनं भवति” — Atharva Veda: Disorganized households lose wealth.<br>
-      “ईशान कोणे कुबेरः वसति… मलिने पलायति” — Kubera Tantra: Kuber leaves a dirty northeast corner.
-    </p>
-
-    <button onclick="showPlan()">मैं अमीर बनना चाहता हूँ / I Want to Become Rich</button>
-  </div>`;
+if(percent<40){
+msg="You are blocking your own growth. Your habits are leading you toward struggle.";
+}else if(percent<70){
+msg="You are average right now. Some habits are helping, but many are holding you back.";
+}else{
+msg="You are on the right path. Stay consistent and your results will multiply.";
 }
 
-/* ---------- PLAN ---------- */
-function showPlan(){
-  let rows = [];
+app.innerHTML=`
+<div class="card">
 
-  if((answers[3]||0)<=4) rows.push(["Messy room","Deep clean entire room","24 hours"]);
-  if((answers[31]||0)<=4) rows.push(["Clutter/junk","Remove broken items & trash","72 hours"]);
-  if((answers[2]||0)<=3) rows.push(["High scrolling","Replace 1 hour with skill-building","Daily 30 days"]);
-  if((answers[30]||0)<=4) rows.push(["Dirty NE corner","Clean Ishaan Kon & keep it clear","48 hours"]);
-  if((answers[40]||0)<=4) rows.push(["No daily ritual","5–10 min discipline (prayer/meditation)","Daily"]);
+<h2>${user.n}'s Result</h2>
+<div class="score">${percent}%</div>
 
-  app.innerHTML = `
-  <div class="card">
-    <h2>तुम्हारी गरीबी के कारण और समाधान</h2>
+<p class="red">${msg}</p>
 
-    <table class="table">
-      <tr><th>Problem</th><th>Task</th><th>Deadline</th></tr>
-      ${rows.map(r=>`<tr><td>${r[0]}</td><td class="green">${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
-    </table>
+<h3>Reality Check</h3>
+<p>
+Your answers clearly show your current habits, environment, and mindset.
+If nothing changes, this score becomes your future.
+</p>
 
-    <h3>Daily Checklist</h3>
-    <ul>
-      <li>[ ] Make bed within 15 minutes of waking</li>
-      <li>[ ] Keep surroundings clean (5–10 min)</li>
-      <li>[ ] No junk accumulation</li>
-      <li>[ ] 1 hour skill-building (no scrolling)</li>
-      <li>[ ] 5–10 min discipline/prayer</li>
-    </ul>
+<h3>Next Step</h3>
+<p class="green">
+Start fixing your daily habits immediately. Small changes → big financial outcomes.
+</p>
 
-    <button onclick="finalCommit()">मैं शुरू करूंगा / I Will Start Today</button>
-  </div>`;
+<button onclick="location.reload()">Restart</button>
+
+</div>`;
 }
 
-function finalCommit(){
-  alert("Shani has noted your promise. Lakshmi will return in 21 days if you stay consistent.");
-}
+start();
 
-/* ---------- INIT ---------- */
-if(!user.name){ start(); } else { render(); }
 </script>
+
 </body>
 </html>
