@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,57 +9,84 @@
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
-background: radial-gradient(circle at top,#0f172a,#020617 70%);
 color:#fff;
-overflow-x:hidden;
+background:#020617;
+overflow:hidden;
 }
 
-/* Floating ₹ */
-.rupee{
-position:fixed;
-font-size:22px;
-color:rgba(0,255,153,0.15);
-animation:float 10s linear infinite;
-}
-@keyframes float{
-0%{transform:translateY(100vh);opacity:0;}
-50%{opacity:1;}
-100%{transform:translateY(-10vh);opacity:0;}
-}
-
-.container{max-width:700px;margin:auto;padding:20px;}
-.card{
-background:rgba(255,255,255,0.05);
-border:1px solid rgba(255,215,0,0.3);
-padding:25px;
-border-radius:14px;
-}
-
-.radio{
+/* BACKGROUND IMAGE + GRADIENT */
+.hero{
+height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.9)),
+url("https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3");
+background-size:cover;
+background-position:center;
 display:flex;
-gap:12px;
-padding:12px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid rgba(255,215,0,0.2);
-cursor:pointer;
-}
-.radio:hover{
-background:rgba(255,215,0,0.08);
-transform:scale(1.02);
+align-items:center;
+justify-content:center;
 }
 
-.small{font-size:12px;color:#aaa;}
+.hero-content{
+text-align:center;
+max-width:600px;
+}
+
+.hero-title{
+font-size:34px;
+font-weight:700;
+background:linear-gradient(90deg,#ffd700,#00ff99);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.hero-sub{
+margin-top:15px;
+color:#aaa;
+font-size:16px;
+}
+
+/* FORM BOX */
+.form-box{
+margin-top:30px;
+background:rgba(255,255,255,0.05);
+padding:20px;
+border-radius:12px;
+border:1px solid rgba(255,215,0,0.3);
+backdrop-filter:blur(10px);
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,0.2);
+background:rgba(0,0,0,0.4);
+color:#fff;
+}
+
+input:focus{
+outline:none;
+border-color:#00ff99;
+box-shadow:0 0 10px rgba(0,255,153,0.4);
+}
 
 button{
-background:linear-gradient(90deg,#00ff99,#ffd700);
-border:none;
-padding:12px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-margin-top:15px;
 width:100%;
+margin-top:15px;
+padding:12px;
+border:none;
+border-radius:8px;
+background:linear-gradient(90deg,#00ff99,#ffd700);
+font-weight:bold;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px rgba(255,215,0,0.4);
 }
 
 .nav{display:flex;gap:10px;}
@@ -85,12 +111,32 @@ let user={};
 
 function start(){
 app.innerHTML=`
-<div class="card">
-<h2>Wealth Audit</h2>
+
+<div class="hero">
+
+<div class="overlay"></div>
+
+<div class="hero-content">
+
+<h1 class="hero-title">
+Your Lifestyle is Blocking Your Wealth
+</h1>
+
+<p class="hero-sub">
+This audit will expose what is silently stopping your income growth.
+</p>
+
+<div class="form-box">
 <input id="name" placeholder="Enter your name">
 <input id="age" placeholder="Enter your age" type="number">
-<button onclick="begin()">Start</button>
-</div>`;
+
+<button onclick="begin()">Start Wealth Audit</button>
+</div>
+
+</div>
+</div>
+
+`;
 }
 
 function begin(){
@@ -238,4 +284,3 @@ start();
 </script>
 </body>
 </html>
-```
