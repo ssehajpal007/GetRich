@@ -1,0 +1,2 @@
+# GetRich
+Wanna get rich??
